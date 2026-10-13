@@ -1,4 +1,4 @@
-const API_URL = "https://1409v1.hgr02339.workers.dev";
+const API_URL = "https://1310nofa.hgr02339.workers.dev";
 const HOST = location.hostname;
 
 const bg = document.querySelector(".bg");
